@@ -19,9 +19,23 @@ public class ProjectController {
     private ProjectService projectService;
 
     @GetMapping
-    public ResponseEntity<List<Project>> getAllProjects() {
-        List<Project> projects = projectService.getAllProjects();
-        return ResponseEntity.ok(projects);
+    public ResponseEntity<List<Project>> getAllProjects(@RequestParam(required = false) Long statusId,
+                                                        @RequestParam(required = false) String sortBy) {
+        try {
+            List<Project> projects;
+
+            if (statusId != null) {
+                projects = projectService.getProjectsByStatus(statusId);
+            } else if (sortBy != null) {
+                projects = projectService.getProjectsWithSorting(sortBy);
+            } else {
+                projects = projectService.getAllProjects();
+            }
+
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{id}")
@@ -33,8 +47,12 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
-        Project createdProject = projectService.createProject(project);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
+        try {
+            Project createdProject = projectService.createProject(project);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")

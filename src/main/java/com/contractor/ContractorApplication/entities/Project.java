@@ -1,5 +1,6 @@
 package com.contractor.ContractorApplication.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -13,6 +14,12 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
 
     @Column(nullable = false)
     private String title;
@@ -37,12 +44,13 @@ public class Project {
     // Constructors
     public Project() {}
 
-    public Project(String title, ProjectStatus status, LocalDate startDate, LocalDate endDate, Double cost) {
+    public Project(String title, ProjectStatus status, LocalDate startDate, LocalDate endDate, Double cost, User user) {
         this.title = title;
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
         this.cost = cost;
+        this.user = user;
     }
 
     // Getters and Setters
@@ -66,6 +74,14 @@ public class Project {
 
     public List<ProjectItem> getItems() { return items; }
     public void setItems(List<ProjectItem> items) { this.items = items; }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     // Helper methods
     public void addItem(ProjectItem item) {
