@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Authorization configuration (this part was already correct)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/health", "/api/**").permitAll()
                         .requestMatchers("/api/project-statuses").permitAll()
                         .anyRequest().authenticated()
                 )
